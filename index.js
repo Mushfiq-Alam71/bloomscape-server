@@ -58,12 +58,12 @@ async function run() {
       res.send(result);
     });
     // update data
-    app.put("/craft/:id", async (req, res) => {
+    app.put("/blog/:id", async (req, res) => {
       const id = req.params.id;
       const filter = { _id: new ObjectId(id) };
       const options = { upsert: true };
       const updatedBlog = req.body;
-      const craft = {
+      const blog = {
         $set: {
           name: updatedBlog.name,
           category: updatedBlog.category,
@@ -72,7 +72,7 @@ async function run() {
           photo: updatedBlog.photo,
         },
       };
-      const result = await craftCollection.updateOne(filter, craft, options);
+      const result = await blogCollection.updateOne(filter, blog, options);
       res.send(result);
     });
 
