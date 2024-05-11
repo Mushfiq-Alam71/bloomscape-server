@@ -35,6 +35,13 @@ async function run() {
       res.send(result);
     });
 
+    // get data from database through server and send to client side
+    app.get("/blog", async (req, res) => {
+      const cursor = blogCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
     );
