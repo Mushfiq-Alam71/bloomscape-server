@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const app = express();
 const port = process.env.PORT || 5000;
 
@@ -27,7 +27,7 @@ async function run() {
     // collection
     const blogCollection = client.db("blogDB").collection("blog");
 
-    // sending data to the database through the server from client side
+    // sending (single data) to the database through the server from client side
     app.post("/blog", async (req, res) => {
       const newBlog = req.body;
       console.log(newBlog);
@@ -35,13 +35,22 @@ async function run() {
       res.send(result);
     });
 
-    // get data from database through server and send to client side
+    // get (all data) from database through server and send to client side
     app.get("/blog", async (req, res) => {
       const cursor = blogCollection.find();
       const result = await cursor.toArray();
       res.send(result);
     });
 
+    //getting (single data) from database through server and send to client side
+    app.get("/blog/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await blogCollection.findOne(query);
+      res.send(result);
+    });
+
+    // checking connection with mongodb server
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
     );
