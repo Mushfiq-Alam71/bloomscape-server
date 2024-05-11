@@ -57,6 +57,24 @@ async function run() {
       const result = await blogCollection.deleteOne(query);
       res.send(result);
     });
+    // update data
+    app.put("/craft/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      const updatedBlog = req.body;
+      const craft = {
+        $set: {
+          name: updatedBlog.name,
+          category: updatedBlog.category,
+          description: updatedBlog.description,
+          longdescription: updatedBlog.longdescription,
+          photo: updatedBlog.photo,
+        },
+      };
+      const result = await craftCollection.updateOne(filter, craft, options);
+      res.send(result);
+    });
 
     // checking connection with mongodb server
     console.log(
