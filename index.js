@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
+require("dotenv").config();
 const { MongoClient, ServerApiVersion } = require("mongodb");
-const { log } = require("console");
 const app = express();
 const port = process.env.PORT || 5000;
 
@@ -23,6 +23,17 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
+
+    // collection
+    const blogCollection = client.db("blogDB").collection("blog");
+
+    // sending data to the database through the server from client side
+    app.post("/blog", async (req, res) => {
+      const newBlog = req.body;
+      console.log(newBlog);
+      const result = await blogCollection.insertOne(newBlog);
+      res.send(result);
+    });
 
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
