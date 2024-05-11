@@ -50,6 +50,14 @@ async function run() {
       res.send(result);
     });
 
+    // delete a data from database
+    app.delete("/blog/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await blogCollection.deleteOne(query);
+      res.send(result);
+    });
+
     // checking connection with mongodb server
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
