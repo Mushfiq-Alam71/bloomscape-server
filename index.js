@@ -76,6 +76,16 @@ async function run() {
       res.send(result);
     });
 
+    // search functionality
+    app.get("/blog-search", async (req, res) => {
+      let filter = {};
+      if (req.query.search) {
+        filter.name = { $regex: req.query.search, $options: "i" };
+      }
+      const result = await blogCollection.find(filter).toArray();
+      res.send(result);
+    });
+
     // checking connection with mongodb server
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
