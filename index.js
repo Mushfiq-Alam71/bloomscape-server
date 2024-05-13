@@ -76,6 +76,17 @@ async function run() {
       res.send(result);
     });
 
+    // email
+    app.get("/craft/email/:email", async (req, res) => {
+      console.log(req.params.email);
+      const result = await blogCollection
+        .find({
+          email: req.params.email,
+        })
+        .toArray();
+      res.send(result);
+    });
+
     // search functionality
     app.get("/blog-search", async (req, res) => {
       let filter = {};
@@ -83,6 +94,29 @@ async function run() {
         filter.name = { $regex: req.query.search, $options: "i" };
       }
       const result = await blogCollection.find(filter).toArray();
+      res.send(result);
+    });
+
+    // featured blog
+    app.get("/featuredblog", async (req, res) => {
+      const blog = {
+        blogName: 1,
+        blogOwnerPhoto: 1,
+        blogOwnerEmail: 1,
+        wordCount: { $size: { $split: ["$longdescription", " "] } },
+      };
+      const newBlog = await blogCollection
+        .aggregate([
+          { $project: blog },
+          { $sort: { wordCount: -1 } },
+          { $limit: 10 },
+        ])
+        .toArray();
+
+      const result = newBlog.map((newBlog, index) => ({
+        ...newBlog,
+        serial: index + 1,
+      }));
       res.send(result);
     });
 
