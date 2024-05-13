@@ -63,15 +63,7 @@ async function run() {
       const filter = { _id: new ObjectId(id) };
       const options = { upsert: true };
       const updatedBlog = req.body;
-      const blog = {
-        $set: {
-          name: updatedBlog.name,
-          category: updatedBlog.category,
-          description: updatedBlog.description,
-          longdescription: updatedBlog.longdescription,
-          photo: updatedBlog.photo,
-        },
-      };
+      const blog = { $set: { ...updatedBlog } };
       const result = await blogCollection.updateOne(filter, blog, options);
       res.send(result);
     });
@@ -100,9 +92,9 @@ async function run() {
     // featured blog
     app.get("/featuredblog", async (req, res) => {
       const blog = {
-        blogName: 1,
-        blogOwnerPhoto: 1,
-        blogOwnerEmail: 1,
+        name: 1,
+        posterName: 1,
+        posterPhoto: 1,
         wordCount: { $size: { $split: ["$longdescription", " "] } },
       };
       const newBlog = await blogCollection
