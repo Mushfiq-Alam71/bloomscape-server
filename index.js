@@ -6,7 +6,17 @@ const app = express();
 const port = process.env.PORT || 5000;
 
 // middleware
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "http://localhost:5174",
+      "https://b9-a11-client.web.app",
+      "https://b9-a11-client.firebaseapp.com",
+    ],
+    // credentials: true,
+  })
+);
 app.use(express.json());
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.azafshu.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
@@ -93,23 +103,19 @@ async function run() {
     app.get("/featuredblog", async (req, res) => {
       const blog = {
         name: 1,
+        _id: 1,
         posterName: 1,
         posterPhoto: 1,
         wordCount: { $size: { $split: ["$longdescription", " "] } },
       };
-      const newBlog = await blogCollection
+      const blogs = await blogCollection
         .aggregate([
           { $project: blog },
           { $sort: { wordCount: -1 } },
           { $limit: 10 },
         ])
         .toArray();
-
-      const result = newBlog.map((newBlog, index) => ({
-        ...newBlog,
-        serial: index + 1,
-      }));
-      res.send(result);
+      res.send(blogs);
     });
 
     // checking connection with mongodb server
