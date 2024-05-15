@@ -80,7 +80,7 @@ async function run() {
     });
 
     // email
-    app.get("/craft/email/:email", async (req, res) => {
+    app.get("/blog/email/:email", async (req, res) => {
       console.log(req.params.email);
       const result = await blogCollection
         .find({
