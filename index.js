@@ -36,6 +36,7 @@ async function run() {
 
     // collection
     const blogCollection = client.db("blogDB").collection("blog");
+    const commentCollection = client.db("blogDB").collection("comment");
 
     // sending (single data) to the database through the server from client side
     app.post("/blog", async (req, res) => {
@@ -116,6 +117,19 @@ async function run() {
         ])
         .toArray();
       res.send(blogs);
+    });
+
+    // add comment
+    app.post("/comments", async (req, res) => {
+      const result = await commentCollection.insertOne(req.body);
+      res.send(result);
+    });
+
+    // get comment
+    app.get("/comments/:id", async (req, res) => {
+      const filter = { blogId: req.params.id };
+      const result = await commentCollection.find(filter).toArray();
+      res.send(result);
     });
 
     // checking connection with mongodb server
